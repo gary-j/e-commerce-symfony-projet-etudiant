@@ -1,3 +1,17 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+index:
+   path: /
+   controller: App\Controller\TestController::index
+
+# test:
+#   path: /test/{age<\d+>?0}
+#   controller: App\Controller\TestController::test
+#   methods: [GET, POST]
+#   host: localhost
+#   schemes: [https, http]
+  # host: {subdomain}monsite.com
+  #api.monsite.com && wwww.monsite.com && monsite.com
+  #api.monsite.com / wwww.monsite.com / monsite.com
+  # defaults:
+  #   age: 0
+  # requirements:
+  #   age: \d+
