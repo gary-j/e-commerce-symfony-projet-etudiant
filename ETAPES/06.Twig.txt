@@ -1,0 +1,37 @@
+/// TWIG ////
+
+{{ }} = affiche
+{% %} = fait quelque chose
+{# #} = commente
+
+{{ x | upper | filtre2 }} = filtre.  on utilise | pour les filtres, on peut en mettre plusieurs à la suite
+
+{% extends "templates.html.twig" %} = je copie-colle une template.
+
+bb = je créer un block, je le nomme et j'écris mon code dedans
+
+{% block title %}Welcome!{% endblock %}  la valeur par défaut est : Welcome !
+
+/// LES PARTIALS et leur INCLUDES ///
+
+bout de code répétés plusieurs fois
+alors on les met dans des fichiers (dans templates), 
+_partial.html.twig = par convention on met un underscore au début
+
+POUR LES INSERER :
+{% include _partial.html.twig % }
+
+POUR TRAVAILLER AVEC DES VARIALBLES DANS LES SPARTIALS :
+on utilise "with" et les {} pour des tableaux associatifs (dans twig)
+
+{% include _partial.html.twig % with { "formateur": formateur1 } }
+{% include _partial.html.twig % with { "formateur": formateur2 } }
+
+AUTRE METHODE :
+DECLARER LA VARIABLE DANS TWIG AVANT L'INCLUDES :
+
+{% set formateur = formateur 1 %}
+{% include _partial.html.twig % }
+
+{% set formateur = formateur 2 %}
+{% include _partial.html.twig % }

@@ -1,0 +1,62 @@
+///// CREER (ex: un objet de la classe Product) /////
+
+ public function create(EntityManagerInterface $em)
+    {
+        $product = new Product;
+        $product
+            ->setName('Table en métal')
+            ->setPrice(3000)
+            ->setSlug('table-en-metal');
+
+        $em->persist($product);
+        $em->flush();
+
+///// MODIFIER (ex :dans la table product) /////
+
+public function modify(EntityManagerInterface $em)
+    {
+        $productRepository = $em->getRepository(Product::class);
+        $product = $productRepository->find(3);
+
+        $product->setPrice(2500)
+        // PAS BESOIN DE $em->persist($product), car il existe déjà, je flush direct
+
+        $em->flush();
+
+///// SUPPRIMER (ex :dans la table product) /////
+
+public function delete(EntityManagerInterface $em)
+{
+    $productRepository = $em->getRepository(Product::class);
+    $product = $productRepository->find(2);
+
+    $em->remove($product);
+    $em->flush();
+}
+
+
+/// TROUVER ///
+
+    // count([])
+    // find(id) - findAll() - 
+    // findBy([], []) - findOneby([],[])
+
+
+    public function repository(ProductRepository $productRepository)
+    {
+        // count([])
+        // find(id) - findAll() - 
+        // findBy([], []) - findOneby([],[])
+
+        $products = $productRepository->findOneBy(['price' => 1500]);
+        dump($products);
+
+        $count = $productRepository->count(['price' => 1500]);
+        dump($count);
+        return $this->render('home.html.twig');
+    }    
+
+LES use (appelés) :
+use App\Entity\Product;
+use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;   

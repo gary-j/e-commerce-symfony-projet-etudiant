@@ -1,0 +1,105 @@
+Manuellement :
+public function create(FormFactoryInterface $factory, CategoryRepository $categoryRepository, Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
+    {
+        dump($request);
+
+        $builder = $factory->createBuilder(FormType::class, null, [
+            'data_class' => Product::class
+        ]);
+
+        $builder->add('name', TextType::class, [
+            'label' => 'Nom du Produit',
+            'attr' => ['placeholder' => 'Produit...']
+        ])
+
+          $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $product = $form->getData();
+            $product->setSlug(strtolower($slugger->slug($product->getName())));
+            $em->persist($product);
+            $em->flush($product);
+
+            dd($product);
+        }
+        $formView = $form->createView();
+__________________
+
+Automatiquement
+php bin/console make:form ProductType
+Du coup dans mon Product controller je me fais livrer un formulaire qui existe déjà.
+Le builder ne m'est plus nécessaire et mon code se transforme en : 
+
+$form = $this->createForm(ProductType::class);
+CAR JE REÇOIS DIRECTEMENT UN FORMULAIRE.
+
+je n'ai plus besoin de la $factory, c-a-d:
+$builder = $factory->createBuilder(FormType::class)
+ni de 
+$form = $builder->getForm();
+
+________ 
+
+Si je veux un $builder vide, je peux par exemple :
+$builder = $this->createFormBuilder():
+$builder->add....
+________
+
+Je peux créer un formulaire avec un nom personnalisé :
+$builder = $factory->createNamedBuilder('SUPERFORMULAIRE', ProductType::class);
+________
+
+I.  Je n'ai plus besoin de la (FormFactoryInterface $factory)
+        car je me fais injecter la class de formulaire dans une variable :
+    $form = $this->createForm(ProductType::class);
+
+En fonction d'une CRÉATION ou d'une MODIFICATION, je stock dans ma variable $form un objet $product vide ou pas :
+
+• CREATION : 
+    $product = new Product;
+
+        $form = $this->createForm(ProductType::class, $product);
+---
+• MODIFICATION :
+    $product = $form->ProductRepository->find($id)
+        $form = $this->createForm(ProductType::class, $product)
+
+II. Je n'ai plus besoin de 
+            $product = $form->getData();
+    car je me fais livrer un objet $product qui contient toutes les infos
+________
+
+SOUMISSION DE FORMULAIRE / REDIRECTION
+
+I. Manuellement :
+    if ($form->isSubmitted()) {
+                $em->flush($product);
+                
+                $response = new Response();
+
+                $url = $urlGenerator->generate('product_show', [
+                    'category_slug' => $product->getCategory()->getSlug(),
+                    'product_slug' => $product->getSlug()
+                ]);
+            -----
+                $response->headers->set('Location', $url);
+                $response->setStatusCode(302);
+            -----
+            ou  $response = new RedirectResponse($url);
+            -----
+                return $response;
+            }
+
+II. Automatiquement
+
+l'Abstract controller nous fourni le "redirectToRoute"
+
+        return $this->redirectToRoute(
+                'product_show',
+                [
+                    'category_slug' => $product->getCategory()->getSlug(),
+                    'product_slug' => $product->getSlug(),
+                ],
+                302
+            );

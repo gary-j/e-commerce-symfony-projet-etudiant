@@ -1,0 +1,32 @@
+__________________________________________________________
+
+INSTALLER BIBLIOTEQUE TIERCE AVEC LE CONTAINER DE SERVICES
+__________________________________________________________
+
+• composer require cocur/slugify
+ si je tape :
+php bin/console debug:autowiring slug 
+je n'ai aucun résultat,
+les classes du dossier Vendor : ne sont pas connu automatiquement du container de service
+
+
+pour utiliser la classe je dois la déclarer dans la fonction; exemple :
+
+public function Slugigi()
+{
+    $slugify = new Slugify();
+    $slugify->slugify("hello big world"); // hello-big-world
+}
+
+POUR FAIRE CONNAITRE LA CLASSE AU CONTAINER DE SERVICES ET ME LA FAIRE LIVRER AUTOMATIQUEMENT
+JE DOIS aller le faire dans le fichier :
+services.yaml
+Cocur\Slugify\Slugify: ~
+
+Maintenant la classe est chargée automatiquement par le container de service.
+Je peux la charger directement en paramètre de fonction
+
+public function Slugigi(Slugify $slugify)
+{
+    //
+}

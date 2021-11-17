@@ -1,0 +1,88 @@
+===== F O R M U L A I R E =====
+
+1. composer require form
+2. les services étaient préinstallés
+
+3. FormFactoryInterface est UNE GROSSE ENTITE
+
+public function create(FormFactoryInterface $factory)
+    {
+        $builder = $factory->createBuilder();
+
+$builder->add('name')
+            ->add('shortDescription')
+            ->add('price')
+            ->add('category');
+
+
+$form = $builder->getForm();
+
+5. getForm() = ENORME LISTE :: pour afficher seulement ce dont j'ai besoin
+
+j'utilise la méthode createView() :
+$formView = $form->createView();
+
+
+4. methode add() prend 3 paramètres :
+
+- NOM DU CHAMP
+- TYPE DE CHAMP (nom de la classe) TextType::class , TextareaType::class etc...
+- Des OPTIONS (tableau associatif)
+
+📖 Documentation officielle de Symfony - La liste des types de champs existants : https://symfony.com/doc/current/reference/forms/types.html
+
+$builder->add('name', TextType::class, [
+     'label' => 'Nom du Produit',
+     'attr' => ['class' => 'form-control', 'placeholder' => 'Tapez le nom du produit']
+])
+
+ ->add('category', ChoiceType::class, [
+                'label' => 'Categorie',
+                'attr' => [
+                    'class' => 'form-control'
+                ],
+                'placeholder' => '-- choisir une categorie --',
+                'choices' => [
+                    'categorie 1' => 1,
+                    'categorie 2' => 2
+                ]
+_____
+POUR REMPLIR DYNAMIQUEMENT LES CHOIX EN FONCTION DE CE QUE J'AI EN BDD, j'ai 2 solutions :
+
+1. MANUELLEMENT, avec le ChoiceType::class
+
+    Je fais une boucle foreach.  je me fais livrer le Repository en question. ici le (categoryRepository)
+     $options = [];
+        foreach ($categoryRepository->findAll() as $category) {
+            $options[$category->getName()] = $category->getId();
+        }
+    puis je livre $options à 'choices'
+
+2. AUTOMATIQUEMENT grace à EntityType::class de SymfonyForm
+
+le 'choices' se transforme en 'class', dans les paramètres, avec un 'choices-label :
+
+     ->add('category', EntityType::class, [
+               ...
+                'placeholder' => '-- Choisir une catégorie --',
+                'class' => Category::class,
+                'choice_label' => 'name', //ou une fonction avec des formatages par exemple
+            ]);
+           
+           'choices_label'=> function(Category $category){
+               return strtoupper($category->getName());
+           }
+_____
+
+• MODIFIER LA REQUETE DQL ex: pour TRIER OU ORGANISER les données
+• faire appel à l'EntityRepository de Doctrine ORM
+
+        $builder->add('users', EntityType::class, [
+            'class' => User::class,
+            'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('u')
+                    ->orderBy('u.username', 'ASC');
+            },
+            'choice_label' => 'username',
+        ]);
+

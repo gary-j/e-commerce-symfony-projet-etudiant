@@ -1,0 +1,27 @@
+BUNDLE Twig
+• composer require Twig
+_____
+•composer require cocur/slugify
+_____
+SYMFONY MAKER BUNDLE (créer des entités, des controlles etc...)
+• composer require --dev symfony/maker-bundle
+_____
+BUNDLE DOCTRINE
+• composer require doctrine
+
+FIXTURES / FAKER ET EXTENSION et method addProvider(chemin\de\la\classe($pourQuelleVariable))
+• composer require --dev fakerphp/faker 
+• composer require liorchamla/faker-price
+• composer require mbezhanov/faker-provider-collection
+• composer require bluemmb/faker-picsum-photos-provider
+
+• composer require string // pour les slugs
+• composer require debug
+
+_____
+FORMULAIRE
+• composer require form 
+_______
+
+Classe de formulaire pour éviter de le faire à la main et de répéter le code
+php bin/console make:form NomduformulaireType

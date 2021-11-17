@@ -1,0 +1,15 @@
+- Lancement du serveur PHP : php -S localhost:4000
+- Autochargment manuel des classes, puis
+- (composer init)
+- Autochargment des classes avec composer, PSR-4
+- composer dump-autoload
+- require "vendor/autoload.php";
+
+- gestion de dates, installation de Nesbot/Carbon
+$ composer require nesbot/carbon
+
+- Installer symphony globalement
+ curl -sS https://get.symfony.com/cli/installer | bash
+
+- Or install it globally on your system:
+  mv /Users/garyj/.symfony/bin/symfony /usr/local/bin/symfony

@@ -1,0 +1,28 @@
+Faker 
+
+fakerphp/faker :
+composer require fakerphp/faker
+
+provider pour Faker
+mbezhanov/faker-provider-collection :
+composer require mbezhanov/faker-provider-collection
+
+liorchamla/faker-prices :
+composer require liorchamla/faker-prices
+________________________________
+
+cocur/slugify :
+composer require cocur/slugify
+________________________________
+doctrine/orm : 
+composer require doctrine/orm
+________________________________
+symfony/string :
+composer require symfony/string
+________________________________
+bluemmb/faker-picsum-photos-provider :
+composer require bluemmb/faker-picsum-photos-provider
+________________________________
+
+DOCTRINE BUNDLE FIXTURES
+composer require orm-fixtures 

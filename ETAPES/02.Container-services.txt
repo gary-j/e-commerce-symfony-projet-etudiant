@@ -1,0 +1,62 @@
+/////////////////////////
+LE CONTAINER DES SERVICES
+/////////////////////////
+
+logger, mailer, router...
+
+php bin/console debug:autowiring --all
+
+exemple je veux écrire des logs, quand j'appelle une fonction
+- php bin/console debug:autowiring log
+- psr\Log\LoggerInterface (log dans l'interface)
+
+1/ utiliser en injections de dépendance DANS UN CONSTRUCTEUR
+protected $logger;
+public function __construct(LoggerInterface $logger;)
+
+2/ utiliser directement dans une fonction, QUE POUR LES CONTROLLERS, une méthode couplée à une route :
+    public function hello($prenom, LoggerInterface $looger)
+    {
+        $logger->error("Mon message de log");
+        return new Response("Hello $prenom");
+    }
+
+LE CONTAINER DE SERVICE DE SYMFONY CONSIDERE TOUTES LES CLASSES DÉCLARÉE DANS :
+src/ COMME DES SERVICES ! (sauf qeulques unes)
+DONC JE PEUX LES DEMANDER QUAND JE VEUX (__construct)
+
+    //  Pour charger plusieurs fonctions dans un constructeur cf :
+    //  https://www.amitmerchant.com/multiple-constructors-php/
+
+    // DANS LES FONCTIONS DE CONTROLLERS UNIQUEMENT 
+    // JE PEUX CHARGER PLUSIEURS SERVICES :
+
+!!!! 
+DANS LE FICHIER config/services.yaml je peux renseigner les arguments qu'un service à besoin pour fonctionner :
+ex : public_function --construct(LoggerInterface $logger, float $tva)
+LE FLOAT $TVA gène le constructeur de service, il ne sait pas ce que c'est.
+
+>>> dans services.yaml :
+App\Taxes\Calculator:
+    arguments:
+        $tva:20
+
+
+--- SYMFONY/DEPEDENCY-INJECTIONS
+
+la class PATH de twig me permet de faire appel automatiquement à UrlGenerator
+ce qui m'évite de me le faire livrer dans la fonction ET 
+cela m'évite de devoir le passé en paramètre d'affichage Twig :
+
+public function show(UrlGeneratorInterface $urlGenerator)
+    {
+          return $this->render('product/show.html.twig', [
+            'product' => $product,
+            'urlGenerator' => $urlGenerator
+        ]);
+    }
+pui dans le fichier twig d'avoir des url de type :
+<a href="{{ urlGenerator.generate('product_category', {'slug': product.category.slug} )}} ">{{product.category.name}}</a>
+
+MAIS SIMPLEMENT :
+<a href="PATH(nomDeLaRoute)"

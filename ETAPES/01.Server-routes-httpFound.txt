@@ -1,0 +1,81 @@
+ETAPES
+
+- Lancer serveur de Symfony en mode TLS
+- Authorité de certification, connexion https pour le développement
+- commande : symfony server:ca:install
+- commande pour lancer le serveur SYMFONY : symfony serve 
+- commande pour lancer le serveur en background: 
+symfony serve -d
+- commande pour arreter le serveur en background : symfony server:stop 
+
+- Config/routes.yaml
+fichier de gestion des routes
+- décommenter
+
+- bundle symfony/var-dumper
+dd() = dump et die; 
+
+-le package SYMFONY / Http-foundation (installable dans tous projets)
+permet de mieux manipuler les urls, les REQUETES HTTP 
+
+L'OBJET 'Request' et sa méthode 'createFromGlobals()' et sa méthode 'query'...
+
+- Request::createFromGlobals(); (va me permettre de prendre en compte tous ce qu'il y a dans les globales)
+($_POST $_GET $_POST $_SESSION etc...)
+
+-   $request = Request::createFromGlobals();
+    $age = $request->query->get('age');
+
+    +query >> $_GET
+    +request >> $_POST
+    +server >> $_SERVER
+    +server >> $_SERVER
+    +files >> $_FILES
+    +cookies >> $_COOKIES
+    +headers >> représentee en-têtes dans nos requetes Http
+
+    TOUT CELA EST DES "BAGS" 
+
+
+tous nos Controller, fonctions DOIVENT RETOURNER UNE RÉPONSE Http:
+Objets de la classes 'Response' .
+return new Response (). ou return new Response->methode()
+
+//////////////////
+ROUTAGE DE SYMFONY
+//////////////////
+
+package Symfony/Routing 
+
+REQUIREMENTS
+- {} argument pour les routes 
+< > : regex
+?'' : valeur par défaut
+
+- methods: [GET, POST]
+- host: {subdomain}.monsite.com  retirer le LOCALHOST EN PRODUCTION
+  # la route est accessible depuis tout les sous-domaines de monsite.com
+  # si host: monsite.com alors la route n'est accessible QUE depuis monsite.com/test4/33
+
+- schemes: [http, https]
+  # la route est accessible depuis http et/ou https
+
+  RegEx et FONCTION preg_match() pour vérifier ce qu'il y dans une variable
+  (url, email) et faire une action en conséquence
+  
+https://www.zendevs.xyz/les-expressions-regulieres-en-php-regex/#:~:text=Les%20fonctions%20REGEX%20en%20PHP&text=recherche%20un%20motif%20dans%20la,motif%20existe%2C%20et%20false%20sinon.&text=Effectue%20une%20recherche%20globale%20sur,la%20recherche%20et%20le%20remplacement.&text=Effectue%20une%20recherche%20et%20un%20remplacement%20d'expressions%20r%C3%A9guli%C3%A8res.
+https://www.php.net/manual/fr/function.preg-match.php
+
+if (preg_match('~\D~', $age)) 
+
+///////////////////
+ROUTE EN ANNOTATION
+///////////////////
+
+Symfony flex et alias et recipes
+- composer require annotations  (annot, annots, annotation = alias)
+- les recipes ont tout mis en place automatiquement (les classes, les fonctions...)
+- nouveaux éléments dans le dossier package
+- git status : pour voir les changements
+- maintenant les routes en annotations fonctionnent
+

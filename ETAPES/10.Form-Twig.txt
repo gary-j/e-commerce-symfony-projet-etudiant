@@ -1,0 +1,79 @@
+===== T W I G + F O R M U L A I R E =====
+
+1. afficher formulaire : {{form(forView) }}
+
+    <p></p>
+
+2.  {{ form_start(formViews) }}
+
+
+3.  {{form_errors(formView)}}
+
+    ---------------------------
+4.  {{ form_widget(formView) }}  (ensemble des rangées du formulaire) :
+    
+    --
+    c'est une suite de {{ form_row() }}  (une rangée du formulaire)
+
+    {{ form_row(formView.name) }}
+    <p></p>
+    {{ form_row(formView.shortDescription) }}
+    {{ form_row(formView.price) }}
+    {{ form_row(formView.category) }}
+    -- 
+
+    MAIS UNE RANGÉE CONTIENT ELLE AUSSI PLUSIEURS ÉLÉMENTS :
+
+    {{form_row(formView.name) }} équivaut à :
+
+    • {{ form_label(formView.name) }} => le label champ
+    • {{ form_errors(formView.name) }} => le message d'erreur lié au champ
+    • {{ form_widget(formView.name) }} => le champ lui-même (input, choice, etc...)
+    • {{ form_help(formView.name) }} => Un message que je peux afficher pour aider, renseigner
+
+    et je peux mettre ce que je veut entre les champs.
+    - je peux aussi personnaliser les messages ici, au lieu de le faire dans Controller
+    - je peux ajouter des options commes des attributs (classe hmtl, etc...)
+
+    {{ form_widget(form.task, 'Mon champ perso', {'attr': {'class': 'task_field'}}) }}
+
+    POUR AJOUTER UNE CLASSE SUR UN LABEL (label_attr), sans toucher au label :
+    {{ form_label(formView.price, null, { 'label_attr': {'class': 'GARY'} } )}}
+
+    ---------------------------
+
+    <button></button>
+
+6.  {{form_end(formView) }}
+
+_______
+-------------------
+THEME DE FORMULAIRE
+-------------------
+1. Si pour tout mes form_row() je veux la meme config, ex : 
+    <div class="row"> div class="form-group"> div class="form-control"
+----
+   • je peux créer un block form_row sous le block body :
+    {% block form_row %}
+        <div class="form-group">
+            {{form_label(form)}}
+            {{form_widget(form, {'attr':{'class':'form-control'}})}}
+            {{form_help(form)}}
+            {{form_errors(form)}}
+        </div>
+    {% endblock %}
+
+    • je fais appel à ce bout de theme, en DÉBUT de fichier (après l'extends), avec :
+      {% form_theme formView '_self' %}
+
+2. JE PEUX UTILISER UN-DES THEME.S COMPLET.S FOURNI.S PAR SYMFONY OU CRÉÉ.S PAR MOI :
+{% form_theme formView 'bootstrap_4_layout.html.twig' %}
+{% form_them, nom de la variable qui fourni les donnés à Twig, 'chemin du theme' %}
+
+3. JE PEUX DIRECTEMENT DIRE À SYMFONY D'UTILISER CE.S THEME.S AUTOMATIQUEMENT pour tout le site :
+dans config/packages/twig.yaml, ajouter :
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes: 
+        - bootstrap_4_layout.html.twig
+        - autre-theme-.html.twig

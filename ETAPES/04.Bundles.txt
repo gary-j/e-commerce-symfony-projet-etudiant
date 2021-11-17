@@ -1,0 +1,28 @@
+____________
+Les BUNDLES
+____________
+
+Déclarer dans config/bundles.php
+
+à la différence des services, les bundles se charge dynamiquement de créer/ faire connaitre les services au container.
+
+exemple LA LIBRAIRIE TWIG :
+• composer require twig    (twig est un alias que Symfony Flex connait)
+• deux lignes ont été ajoutées au bundles.php
++ des recettes faites pas SymfonyFlex (configuration, et templates, twig)
+
+et si je tape :
+php bin/console debug:autowiring twig 
+
+j'ai un résultat
+ Twig\Environment (twig)
+
+ class Environnement, que je peux utiliser
+________________________________
+
+DOCTRINE BUNDLE FIXTURES
+composer require orm-fixtures 
+
+________________________________
+DEBUG
+composer require debug
