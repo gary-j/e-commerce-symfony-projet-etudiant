@@ -78,6 +78,8 @@ class ProductController extends AbstractController
         $product->setSlug(strtolower($slugger->slug($product->getName())));
 
         if ($form->isSubmitted()) {
+
+            dd($form->getData());
             $em->flush($product);
             // dd($product);
 

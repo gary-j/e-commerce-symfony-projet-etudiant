@@ -1,0 +1,9 @@
+Si je dois souvent utiliser le addModelTransformer, 
+peut-être qu'il est préférable DE CREER MES PROPRES TYPES DE CHAMPS :
+
+
+A revoir,
+car c'est vraiment pour les projets qui en valent la peine.
+
+genre créer moi-même un PriceType::class avec des options personnalisées
+

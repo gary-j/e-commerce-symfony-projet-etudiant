@@ -1,0 +1,105 @@
+•  Nous pouvons agir a différent cycle de vie du formulaire :
+    pre_set_date, post_set_data, pre_submit, submit, post_submit
+
+•  Dans le but d'intéragir avec les champs du formulaire et les données qu'il contient :
+    (afficher ou pas un champ, convertir / formater des données).
+
+• Ceci grace aux Evenements - addEventListener. 
+
+------------------
+METHODE 1 - MANUEL
+------------------
+    exemple : 
+    je multiplie le prix par 100 après la soumission du formulaire, avant le flush en bdd:          
+
+   $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $product = $event->getData();
+            if ($product->getPrice !== null) {
+                $product->setPrice($product->getPrice() * 100);
+            }
+        });
+
+------------------
+METHODE 2 - MANUEL
+------------------   
+
+    J'agis directement sur le champ en question ('price')
+    avec le DataTransformerInterface implémenté dans CallbackTransformer
+    j'utilise la méthode addModelTransformer() du $builder (FormBuilderInterface)
+    Il y a deux fonctions en paramètres, transform ET reverseTransform.
+------
+
+    $builder->get('price')->addModelTransformer(new CallbackTransformer(
+
+                //transform
+
+                function ($value) {
+                    if ($value === null) {
+                        return;
+                    }
+                    return $value / 100;
+                    // dd('transformation', $value);
+                },
+
+                //reverseTransform
+
+                function ($value) {
+                    // dd('ReverseTransformation', $value);
+                    if ($value === null) {
+                        return;
+                    }
+                    return $value * 100;
+                }
+            ));     
+
+---------------------------------------
+METHODE 2 - MANUEL x FACTORISER LE CODE
+---------------------------------------
+•   Je peux factoriser ce code dans une classe pour le réutiliser dans d'autre $builder
+pour l'utiliser dans d'autre FormType.
+
+•   Je le met par exemple dans src/Form/DataTransformer/CentimesTransformer.php
+    et j'implémente le DataTransformerInterface :
+
+                    <?php
+
+                    namespace App\Form\DataTransformer;
+
+                    use Symfony\Component\Form\DataTransformerInterface;
+
+                    class CentimesTransformer implements DataTransformerInterface
+                    {
+                        public function transform($value)
+                        {
+                            if ($value === null) {
+                                return;
+                            }
+                            return $value / 100;
+                        }
+                        public function reverseTransform($value)
+                        {
+                            if ($value === null) {
+                                return;
+                            }
+                            return $value * 100;
+                        }
+                    }
+
+
+•   j'importe la classe directement dans mon addModelTransformer :
+
+        $builder->get('price')->addModelTransformer(new CentimesTransformer);   
+
+
+----------------------------------
+METHODE 3 - AUTOMATIQUE DE SYMFONY 
+----------------------------------
+
+Utiliser les options des champs "EntityType, MoneyType, etc..." dans le $builder . lol ! :
+
+        $builder 
+            ->add('price', MoneyType::class, [
+                            'currency' => 'EUR',
+                            'divisor' => 100,
+            ]);
+
