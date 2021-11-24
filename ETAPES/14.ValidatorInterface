@@ -1,0 +1,183 @@
+------------------------------
+Validation données scalaires :
+------------------------------
+
+    $age = 20;
+            $resultat = $validator->validate($age, [
+                new LessThan(100),
+                new GreaterThan([
+                    'value' => 0,
+                    'message' => "l'age doit être supérieur à {{ compared_value }} mais vous avez donnez {{ value }}"
+                ])
+            ]);
+
+-----------------------------------------
+Validation données complexes (tableaux) :
+-----------------------------------------
+
+
+    $client = [
+        'prenom' => 'Ga',
+        'nom' => 'Beaugoss',
+        'voiture' => [
+            'marque' => 'Rolls Royce',
+            'couleur' => 'Blanche'
+        ]
+    ];
+    $collection = new Collection([
+        'prenom' => [
+            new NotBlank(['message' => "le prénom ne doit pas être nul"]),
+            new Length(['min' => 3, 'minMessage' => "le prénom doit comporter au moins {{ limit }} caractères. Vous en avez rentré {{ value }}"])
+        ],
+        'nom' => new NotBlank(['message' => "merci de rentrer un nom"]),
+        'voiture' => new Collection([
+            'marque' => new NotBlank(["message" => "La marque de la voiture est obligatoire"]),
+            'couleur' => new NotBlank(["message" => "Renseignez une couleur, merci"])
+        ])
+    ]);
+    $resultat = $validator->validate($client, $collection);
+
+----------------------------------
+Afficher les erreurs s'il y en a :
+----------------------------------
+    if ($resultat->count() > 0) {
+                dd("Il y a des erreurs", $resultat);
+            }
+            dd("Tout va bien");
+
+----------------------------------------
+Valider un objet : méthode 1 - AVEC YAML
+----------------------------------------
+
+créer un dossier "validator" dans config/
+et créer un fichier .yaml . par exemple product.yaml (je travaille sur l'entité product).
+Je précise dans le fichier l'espace de nom de mon entité que je veux valider;
+
+---
+    App\Entity\Product:
+        properties :
+            name:
+                - NotBlank: { message: "le nom du produit est obligatoire"}
+                - Length: { min: 3, max: 255, minMessage: "Le nom du produit doit avoir au moins {{ limit }} caractères"}
+---
+
+----
+Dans mon ProductController.php :
+----
+
+    $product = new Product;
+        $product->setName('OK');
+
+        $resultat = $validator->validate($product);
+        dd($resultat);
+
+----
+
+Donc 1 erreur va s'afficher car mon nom de produit ne contient que 2 caractères.
+
+--------------------------------------------------------
+Valider un objet : méthode 2 - DANS L'ENTITY en question
+--------------------------------------------------------
+        **Déprécié**
+        en utilisant une fonction static :
+
+        public static function loadValidatorMetadata(ClassMetadata $metadata)
+            {
+                $metadata->addPropertyConstraints('name', [
+                    new Assert\NotBlank(["message" => "Le nom du produit est obligatoire"]),
+                    new Assert\Length(["min" => 3, "max" => 255, "minMessage" => "le nom du produit doit contenir au moins {{ limit }} caractères"]),
+                ]);
+            }
+
+----------------------------------------------------
+Valider un objet : méthode 3 - GRACE AUX ANNOTATIONS 
+----------------------------------------------------
+    dans l'entity en question (ici Product.php) :
+
+     /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "Le nom du produit est obligatoire")
+     * @Assert\Length(min=3, max=255, minMessage= "Le nom du produit doit comporter au moins {{ limit }} caractères")
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message= "Merci de renseigner un prix")
+     */
+    private $price;
+
+------------------------------
+AFFICHER LES ERREURS DANS TWIG
+------------------------------
+
+avec la méthode ->isValid() 
+
+Dans mon controller, ici le ProductController.php
+• j'ai une fonction edit avec une boucle pour vérifier que le formulaire est soumis ET valide.
+• si le formulaire n'est pas valdie, je sors de la boucle et l'affichage twig s'effectue avec les erreurs.
+
+            if ($form->isSubmitted() && $form->isValid()) {
+
+            dd($form->getData());
+            $em->flush($product);
+
+            return $this->redirectToRoute(
+                'product_show',
+                [
+                    'category_slug' => $product->getCategory()->getSlug(),
+                    'product_slug' => $product->getSlug(),
+                ],
+                302
+            );
+        }
+
+        $formView = $form->createView();
+
+        return $this->render('product/edit.html.twig', [
+            'product' => $product,
+            'formView' => $formView
+        ]);
+
+
+-------------------------
+LES GROUPES DE VALIDATION
+-------------------------
+Je peux demander au Validator, de vérifier seulement les champs que je désir.
+C'est utile si j'utilise le formType en question à plusieurs endroit et que je dois personnaliser la vérification.
+
+• Dans les annotations de l'Entity en question je rajoute groups="nom-du-group" 
+
+          /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message= "Merci de renseigner un prix", groups="with-price")
+     */
+    private $price;
+
+
+• Dans mon controller dans la fonction en question DANS LE 3E PARAMÈTRES de ->createForm() :
+
+     $form = $this->createForm(ProductType::class, $product, [
+            'validation_groups' => ["large-name", "with-price"]
+        ]);
+
+• Pour prendre en compte, tout de même, les champs qui n'ont pas de groupe,
+    je rajoute "Default"
+    car ils sont en fait dans un groups="Default", pour le validator
+
+------------------------------------------------------------------
+POUR TESTER SANS QUE LE NAVIGATEUR VERIFIE LE FORMULAIRE D'ABORD :
+------------------------------------------------------------------
+je rajout dans twig au {{form_start(formView)}}
+
+{{form_start(formView, {'attr':{'novalidate':'novalidate'}} )}}
+
+    •   OU BIEN RAJOUTER EN OPTION DANS LE formType en question :
+            'required' => false
+
+--------------------------------------------
+POUR PERMETTRE UN CHAMP NULL POUR DES TEST :
+--------------------------------------------
+
+rajouter ' ? ' au setter en question dans l'Entity en question 
+ public function setPrice(?int $price): self

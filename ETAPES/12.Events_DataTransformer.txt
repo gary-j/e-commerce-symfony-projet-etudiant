@@ -4,7 +4,10 @@
 •  Dans le but d'intéragir avec les champs du formulaire et les données qu'il contient :
     (afficher ou pas un champ, convertir / formater des données).
 
-• Ceci grace aux Evenements - addEventListener. 
+• Ceci grace aux :
+    Evenements - addEventListener => structure du formulaire
+    DataTransformer => Données du formulaire
+
 
 ------------------
 METHODE 1 - MANUEL

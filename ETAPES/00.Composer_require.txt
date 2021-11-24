@@ -25,3 +25,8 @@ _______
 
 Classe de formulaire pour éviter de le faire à la main et de répéter le code
 php bin/console make:form NomduformulaireType
+_______
+
+VALIDATION DE FORMULAIRE
+• composer req validator
+(validatorInterface)

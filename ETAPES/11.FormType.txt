@@ -68,9 +68,11 @@ En fonction d'une CRÉATION ou d'une MODIFICATION, je stock dans ma variable $fo
 II. Je n'ai plus besoin de 
             $product = $form->getData();
     car je me fais livrer un objet $product qui contient toutes les infos
-________
+_
 
+--------------------------------------
 SOUMISSION DE FORMULAIRE / REDIRECTION
+--------------------------------------
 
 I. Manuellement :
     if ($form->isSubmitted()) {

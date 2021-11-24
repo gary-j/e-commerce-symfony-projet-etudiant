@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductController extends AbstractController
 {
@@ -66,7 +68,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/admin/product/{id}/edit", name="product_edit")
      */
-    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, SluggerInterface $slugger, UrlGeneratorInterface $urlGenerator)
+    public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, SluggerInterface $slugger, ValidatorInterface $validator)
     {
         $product = $productRepository->find($id);
 
@@ -77,21 +79,10 @@ class ProductController extends AbstractController
 
         $product->setSlug(strtolower($slugger->slug($product->getName())));
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            dd($form->getData());
+            // dd($form->getData());
             $em->flush($product);
-            // dd($product);
-
-            // $response = new Response();
-
-            // $url = $urlGenerator->generate('product_show', [
-            //     'category_slug' => $product->getCategory()->getSlug(),
-            //     'product_slug' => $product->getSlug()
-            // ]);
-
-            // $response->headers->set('Location', $url);
-            // $response->setStatusCode(302);
 
             return $this->redirectToRoute(
                 'product_show',
@@ -123,13 +114,22 @@ class ProductController extends AbstractController
 
         $form->handleRequest($request);
         // dd($request);
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+
             // $product = $form->getData();
             $product->setSlug(strtolower($slugger->slug($product->getName())));
             $em->persist($product);
             $em->flush($product);
 
-            dd($product);
+            // Si la validation passe, je redirige sur la page produit
+            return $this->redirectToRoute(
+                'product_show',
+                [
+                    'category_slug' => $product->getCategory()->getSlug(),
+                    'product_slug' => $product->getSlug()
+                ],
+                302
+            );
         }
         $formView = $form->createView();
 
