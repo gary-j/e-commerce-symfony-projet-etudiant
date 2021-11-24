@@ -1,0 +1,22 @@
+TWIG PEUT AFFICHER DYNAMIQUEMENT DES DONNES PAR LUI MEME.
+
+Methode 1 : En faisant appel un controller depuis une template
+    pas recommandé, long, et lourd en processus.
+
+Méthode 2 : En déclarant une variable globals contenant un service ou des données.
+
+    • Dans le ficher config/packages/twig.yaml , je déclare mes globals :
+
+        twig
+            globals:
+                prenomdegary : gary
+                CategoryRepository : "@App\\Repository\\CategoryRepository"
+
+
+    • Dans ma template twig ensuite je peux l'appeler :
+
+        {% for c in CategoryRepository.findAll() %}
+        
+            <a class="dropdown-item" href="#">{{c.name}}</a>
+
+        {% endfor %}
