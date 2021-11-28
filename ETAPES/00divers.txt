@@ -13,3 +13,30 @@ $ composer require nesbot/carbon
 
 - Or install it globally on your system:
   mv /Users/garyj/.symfony/bin/symfony /usr/local/bin/symfony
+
+---------------
+PHP BIN/CONSOLE
+---------------
+
+• php bin/console debug:config *plusmotcléf*
+
+• php bin/console config:dump  *plusmotcléf*
+
+
+• php bin/console debug:router 
+voir toutes les routes et comment elles fonctionnent
+
+• php bin/console debug:autowiring "recherché"
+
+• php bin/console make:auth
+
+• php bin/console make:form ExampleType
+
+• php bin/console make:user 
+
+• php bin/console make:controller
+
+• php bin/console cache:clear
+
+• php bin/console make:voter CategoryVoter
+

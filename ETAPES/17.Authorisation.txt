@@ -1,0 +1,104 @@
+AUTORISER UNE RÉGION 
+
+-----------
+Méthode 1 :
+-----------
+    - si j'utilise mon propre guard dans le fichier security.yaml :
+
+    alors je décommente et utilise :
+        access_control:
+            - { path: ^/admin, roles: ROLE_ADMIN }
+            - { path: ^/profile, roles: ROLE_USER }
+
+-------------
+Méthode 1.2 :
+-------------
+    Si je veux que certaines routes en /admin soient autorisées, 
+    je fais les réglages dans le controller et la route en question,
+    en me faisant livrer le security de symfony component :
+    avec in_array() je vérifie si le rôle en question existe.
+
+    /**
+     * @Route("/admin/category/{id}/edit", name="category_edit")
+     */
+
+    public function edit($id, Security $security): Response
+    {
+        $user = $security->getUser();
+
+        if ($user === null) {
+            return $this->redirectToRoute("security_login");
+        }
+        dump($user->getRoles());
+
+        if (!in_array('ROLE_ADMIN', $user->getRoles())) {
+            throw new AccessDeniedHttpException("Vous n'avez pas le droit d'acceder à cette ressource");
+        }
+
+-----------
+Méthode 3 :
+-----------
+    via la méthode isGranted() de security
+
+          $user = $security->getUser();
+
+        if ($user === null) {
+            return $this->redirectToRoute("security_login");
+        }
+        if ($security->isGranted('ROLE_ADMIN') === false) {
+            throw new AccessDeniedHttpException("Vous n'avez pas le droit d'acceder à cette ressource");
+        }
+
+-----------
+Méthode 4 :
+-----------
+    via les raccourcis de l'AbstractController, je n'ai pas besoin de security.
+    
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, "Accès interdit !");
+
+---------------------------------
+Méthode 5 : VIA LES ANNOTATIONS !
+---------------------------------
+
+    /**
+     * @Route("/admin/category/{id}/edit", name="category_edit")
+     * @IsGranted("ROLE_ADMIN", message="Ah non, vous n'êtes pas autorisé !")
+     */
+
+!**!    Je peux mettre une annoations @IsGranted en début de controller 
+        qui va agir sur toutes les méthodes du controller.
+
+
+-----------------------------------------------------------------
+AUTORISER SEULEMENT LE PROPRIETAIRE D'UNE CATÉGORIE À LA MODIFIER
+            Controler l'accès à un objet en particulier
+-----------------------------------------------------------------
+
+-----------
+Méthode 1 :  via l'AbstractController
+-----------
+
+        $user = $this->getUser();
+
+        if (!$user) {
+            return $this->redirectToRoute("security_login");
+        }
+
+        if ($user !== $category->getOwner()) {
+            throw new AccessDeniedHttpException("Vous n'êtes pas le propriétaire de cette catégorie");
+        }
+
+-----------
+Méthode 2 :  via les Voters
+-----------
+            • php bin/console make:voter CategoryVoter
+
+        Dans le controller via l'AbstractController :
+
+            $category = $categoryRepository->find($id);
+
+        $this->denyAccessUnlessGranted('CAN_EDIT', $category, "Vous n'êtes pas le proprio de la catégorie");
+
+       - 'CAN_EDIT' est l'$attribute dans CategoryVoter.php
+       - $category est le $subjet dans CategoryVoter.php 
+       - "Vous n'êtes..." est le message a afficher si l'accès est interdit.

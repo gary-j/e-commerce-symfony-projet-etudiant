@@ -12,6 +12,8 @@ Méthode 2 : En déclarant une variable globals contenant un service ou des donn
                 prenomdegary : gary
                 CategoryRepository : "@App\\Repository\\CategoryRepository"
 
+        l'@ est pour appeler un service         
+
 
     • Dans ma template twig ensuite je peux l'appeler :
 
@@ -20,3 +22,5 @@ Méthode 2 : En déclarant une variable globals contenant un service ou des donn
             <a class="dropdown-item" href="#">{{c.name}}</a>
 
         {% endfor %}
+
+        https://symfony.com/doc/5.1/templating/global_variables.html

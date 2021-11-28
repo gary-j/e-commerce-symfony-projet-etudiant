@@ -30,3 +30,12 @@ _______
 VALIDATION DE FORMULAIRE
 • composer req validator
 (validatorInterface)
+
+_______
+LA SECURITE - AUTHENTIFICATION ET AUTORISATION
+• composer req security
+
+_______
+TRADUCTION ET TRADUCTION MESSAGE D'ERREURS
+
+• composer require symfony/translation

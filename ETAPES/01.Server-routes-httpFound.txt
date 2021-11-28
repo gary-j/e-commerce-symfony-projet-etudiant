@@ -79,3 +79,16 @@ Symfony flex et alias et recipes
 - git status : pour voir les changements
 - maintenant les routes en annotations fonctionnent
 
+-------------------
+PRIORITÉ DES ROUTES
+-------------------
+• php bin/console debug:router 
+nous indique les routes et les ranges par ordre alphabétique qui est leur priorité par défaut.
+
+pour changer la priorité d'une route :
+• sois je modifie son nom - pas la meilleure méthode
+
+• sois je défini ça priorité en annotation, dans le controller
+     * @Route("/{slug}", name="product_category", priority=-1)
+
+par défaut la priorité est 0. plus le chiffre est haut plus la priorité est élevée

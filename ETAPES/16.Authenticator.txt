@@ -1,0 +1,97 @@
+M A N U E L L E M E N T
+-----------------------
+
+Création formulaire de Login manuellement qui va travailler avec le Security
+
+• php bin/console make:auth LoginForm > 0
+
+dans SRC/Security un nouveau fichier est créé "LoginFormAuthenticator"
+
+Il contient toutes les méthodes qui vont permettre d'authentifier ou pas un user.
+
+c'est dans celui que je précise pour quelle(s) route(s) et quelle(s) méthode(s), je souhaite APPELER LE DOUANIER.
+
+
+Ce fichier travaille avec config/packages/security.yaml
+
+    guard:  
+        authenticators:
+            -App\Security\MonFormAuthenticator
+---------
+ces lignes sont à décommenter si je travaille uniquement avec l'authenticators fourni par Symfony
+
+
+________
+
+-------------------------------------------------------------
+INTERCEPTER ET PERSONNALISER LES EXCEPTIONS AVEC TRY // CATCH
+-------------------------------------------------------------
+
+I. Dans le LoginFormAuthenticator :
+
+        Si les méthodes getUser() ou checkCredentials() renvoi FALSE
+        automatique elles renvoient vers la méthode onAuthenticationFailure(AuthenticationException $exception)
+
+        Alors nous allons utiliser try/catch pour et thrown pour gerer les exceptions :
+
+        public function getUser($credentials, UserProviderInterface $userProvider)
+            {
+                try {
+
+                    return $userProvider->loadUserByUsername($credentials['email']);
+
+                } catch (UsernameNotFoundException $e) {
+
+                    throw new AuthenticationException("EMAIL INCONNU AU BATAILLON");
+                }
+            }
+
+II. Dans le SecurityController.php :
+
+    public function login(AuthenticationUtils $utils): Response
+    {
+
+        $form = $this->createForm(LoginType::class);
+
+        dump($utils->getLastAuthenticationError(), $utils->getLastUsername());
+
+        return $this->render('security/login.html.twig', [
+            'formView' => $form->createView(),
+            'errors' => $utils->getLastAuthenticationError()
+        ]);
+    }
+
+III.   DANS TWIG
+
+    J'affiche les erreurs persos avec {{ errors.message }} 
+
+    !!!!! si je met {{ errors.messageKey }} je n'ai pas les messages perso. mais les message par défaut SANS les infos sensibles
+
+-----------------------------
+A U T O M A T I Q U E M E N T (pour un formulaire de login)
+-----------------------------
+
+• dans le fichier sécurity.yaml je rajoute l'option :
+
+    form_login:
+        login_path: security_login
+        check_path: security_login
+
+• il attend désormais des champs de formulaire nommés "_username", "_password"
+
+        1. soit je renomme mon formulaire avec "chaine vide", via FormFactoryInterface :
+        $form->$factory->createNamed('', LoginType::class);
+
+        mais c'est trop long et pas la meilleure méthode
+
+        2. soit en ajoutant des options dans le fichier security.yaml
+            username_parameter: login[email]
+            password_parameter: login[password]
+
+-----------------------------------------------
+Traduire ou personnaliser les messages d'erreur
+-----------------------------------------------
+
+https://symfonycasts.com/screencast/symfony-security/errors-logout
+
+fonction avec error.message mais pas avec errors. messageKey ; je ne sais pas pourquoi
