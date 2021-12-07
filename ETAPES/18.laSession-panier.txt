@@ -1,0 +1,89 @@
+----------------------------
+SE FAIRE LIVRER LA SESSION :
+----------------------------
+
+• $request->getSession()->get() - (via la Request)
+ou
+• $session->get() - (directement via la classe SessionInterface)
+
+----------------
+SessionInterface
+----------------
+
+Les données de la session sont rangées dans des "sacs" / "Bags"
+
+• les attributs (donc mon panier, 'cart') sont dans data > "_sf2_attributes"
+        $session->getBag('attributes')
+
+• les messages flash sont danas data > "_symfony_flashes"
+        $session->getBag('flashes')
+
+• je peux créer tous les sacs que je veux avec $session->registerBag(new 'typeDeBag')
+
+        !!!!!
+VS CODE NE ME DONNE PAS TOUTES LES MÉTHODES
+    $session->getBag('flashes')->
+        ¡¡¡¡¡
+
+car getbag() renvoi une interface (SessionBagInterface)
+
+! Alors qu'en réalité dans mon dd($session->getBag('flashes')), JE RECOIS UNE ENTITE FLASHBAG
+
+******
+ASTUCE pour recevoir toutes les méthodes de FLASHBAG, ou autre
+******
+
+1°//
+
+        Je créer une variable $flashbag et je dis à VSCODE qu'elle de type FlashBag grâce à @var dans l'annotation
+                Symfony\Component\HttpFoundation\Session\Flash\FlashBag
+
+        /** @var FlashBag *
+        $flashbag = $session->getBag('flashes');
+--------
+2°// Par les raccourcis de l'AbstractController
+
+        •FlashBagInterface $flashbag
+        ou
+        • $this->addFlash('rubrique', "message")
+
+--------------
+AFFICHAGE TWIG
+--------------
+De même grâce a la variable global app, je peux me faire livrer la session dans TWIG
+et afficher les flashes :
+
+	
+•       {{ dump(app.session.getBag('flashes').get('flashes'))}}
+ou
+•       {{ dump(app.flashes)}}
+•       {{ dump(app.flashes('success') ) }}
+
+
+methode 2 : mettre une boucle for, pour les message flash dans base.html.twig
+
+
+	<body>
+		{% include "shared/_navbar.html.twig" %}
+		<div class="container pt-3">
+			{% for rubrique, messages in app.flashes %}
+				<div class="alert alert-{{rubrique}}">
+					{% for message in messages %}
+						<p>{{message}}</p>
+					{% endfor %}
+				</div>
+			{% endfor %}
+			{% block body %}{% endblock %}
+		</div>
+	</body>
+
+----------------------------------------------
+RAPPEL FACTORING TWIG ET INCLUSION DE TEMPLATE
+----------------------------------------------
+
+Le code de carte produit est utilisé dans plusieurs templates
+• je le place alors dans un partial product/_product_card.html.twig 
+seulement la div class="card"
+
+si mes noms de variables changent dans mes boucles je rajoute :
+{% for .....  with {'p' : product } %} par exemple

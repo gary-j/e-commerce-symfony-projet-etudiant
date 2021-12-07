@@ -66,11 +66,15 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/admin/product/{id}/edit", name="product_edit")
+     * @Route("/admin/product/{id}/edit", name="product_edit", requirements={"id" : "\d+"})
      */
     public function edit($id, ProductRepository $productRepository, Request $request, EntityManagerInterface $em, SluggerInterface $slugger, ValidatorInterface $validator)
     {
         $product = $productRepository->find($id);
+
+        if (!$product) {
+            throw $this->createNotFoundException("Le produit demandé n'existe pas");
+        }
 
         $form = $this->createForm(ProductType::class, $product);
 

@@ -1,0 +1,39 @@
+!!¡¡ TWIG PEUT APPELER UNE METHODE DE CLASSE ¡¡!!
+
+https://twig.symfony.com/doc/2.x/templates.html#variables
+
+J'affiche le prix total d'un produit en fonction de sa quantité 
+{{item.total}} OU {{item.getTotal}}:
+
+• DANS TWIG
+
+{% for item in items %}
+				<tr class="table-light">
+					<td>{{item.product.name}}</td>
+					<td>{{item.product.price}}</td>
+					<td>{{item.qty}}</td>
+					<td>{{item.getTotal}}</td>
+				{% endfor %}
+
+• DANS MON CONTROLLER OU MA CLASS :
+
+ public function getTotal(): int
+    {
+        return $this->product->getPrice() * $this->qty;
+    }
+
+----------------------------
+
+• Pour l'incrémentation je rajoute un paramètre dans l'url du bouton + du panier
+pour etre redirigé sur la meme page.
+	<a href="{{ path('cart_add', {'id':item.product.id}) }}?returnToCart=true" 
+
+• Je rajoute une condition dans la fonction add() de mon controller 
+	- je me fais livrer la Request
+
+	-
+	  if ($request->query->get('returnToCart')) {
+
+            return $this->redirectToRoute('cart_show');
+        }
+
