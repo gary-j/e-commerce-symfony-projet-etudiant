@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Controller\Purchase;
+
+use App\Entity\Purchase;
+use App\Cart\CartService;
+use App\Entity\PurchaseItem;
+use Doctrine\ORM\EntityManager;
+use App\Form\CartConfirmationType;
+use App\Repository\PurchaseRepository;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+
+class PurchaseConfirmationController
+{
+    protected $formFactory;
+    protected $router;
+    protected $security;
+    protected $cartService;
+    protected $em;
+
+    public function __construct(FormFactoryInterface $formFactory, RouterInterface $router, Security $security, CartService $cartService, EntityManagerInterface $em)
+    {
+        $this->formFactory = $formFactory;
+        $this->router = $router;
+        $this->security = $security;
+        $this->cartService = $cartService;
+        $this->em = $em;
+    }
+
+    /**
+     * @Route("/purchase/confirm", name="purchase_confirm")
+     */
+    public function confirm(Request $request, FlashBagInterface $flashBag)
+    {
+        // 1. Nous voulons lire les données du formulaire
+        // FormFactoryInterface / Request
+        $form = $this->formFactory->create(CartConfirmationType::class);
+
+        $form->handleRequest($request);
+
+        // 2. Si le formulaire n'a pas été soumis : sortir de la route
+        // message flash puis redirection (FlahsBagInterface et Routerinterface)
+        // RouterInterface qui comprend urlMatcher, pour ne pas avoir à écrire l'url en dure, mais plutôt le nom d'un route
+
+        if (!$form->isSubmitted()) {
+            $flashBag->add('warning', "Vous devez remplir le formulaire de confirmation");
+            return new RedirectResponse($this->router->generate("cart_show"));
+        }
+        // 3. Si je ne suis pas connecté : sortir de la route
+        // Security
+        $user = $this->security->getUser();
+
+        if (!$user) {
+            throw new AccessDeniedException("Merci de vous connecter pour confirmer une commande");
+        }
+
+        // 4. S'il n'y a pas de produits dans le panier : Sortir de la route
+        // SessionInterface ou CartService
+
+        $cart = $this->cartService->getDetailedCartItems();
+
+        if (empty($cart)) {
+            // dd('OUI LE PANIER EST VIDE');
+            $flashBag->add('warning', 'Vous ne pouvez pas confirmer une commande avec un panier vide');
+
+            return new RedirectResponse($this->router->generate("cart_show"));
+        }
+
+        // dd($data);
+
+        // 5. Nous allons créer une Purchase
+        /** @var Purchase */
+        $purchase = $form->getData();
+
+        // 6. Nous allons la lier avec l'utilisateur actuellement connecté (Security)
+        $purchase->setUser($user)
+            ->setPurchasedAt(new DateTime())
+            ->setTotal($this->cartService->getTotal());
+
+        $this->em->persist($purchase);
+
+        // dd($purchase);
+
+        // 7. Nous lions la Purchase avec les produits dans le panier (Cartservice)
+
+        foreach ($this->cartService->getDetailedCartItems() as $cartItem) {
+
+            $purchaseItem = new PurchaseItem;
+
+            $purchaseItem->setPurchase($purchase)
+                ->setProduct($cartItem->product)
+                ->setProductName($cartItem->product->getName())
+                ->setQuantity($cartItem->qty)
+                ->setProductPrice($cartItem->product->getPrice())
+                ->setTotal($cartItem->getTotal());
+
+            $this->em->persist($purchaseItem);
+        }
+
+        // 8. Nous allons enregistrer la commande (EntityManagerInterface)
+        $this->em->flush();
+        $flashBag->add('success', "La commande à bien été prise en compte");
+
+        return new RedirectResponse($this->router->generate('cart_show'));
+    }
+}

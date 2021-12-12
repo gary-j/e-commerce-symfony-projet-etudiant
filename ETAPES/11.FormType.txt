@@ -28,6 +28,8 @@ __________________
 
 Automatiquement
 php bin/console make:form ProductType
+->-> Je confirme la liaison de ce ProductType à l'entité Product 
+
 Du coup dans mon Product controller je me fais livrer un formulaire qui existe déjà.
 Le builder ne m'est plus nécessaire et mon code se transforme en : 
 
@@ -105,3 +107,45 @@ l'Abstract controller nous fourni le "redirectToRoute"
                 ],
                 302
             );
+
+----------------------------------------------------------
+RECUPÉRATION DONNEES FORMULAIRE AVANT PERSIST() ET FLUSH()
+----------------------------------------------------------
+
+    1. dans mon twig je précise l'action du formulaire (où est ce que je l'envoi), ex :
+
+        {{ form_start(confirmationType, {'action': path('purchase_confirm')} ) }}
+
+    2. mon controller qui gère la route 'purchase_confirm', traite les informations :
+
+        a. Soit je reçois un tableau multidimensionnelle - cf. dd($form->getData()).
+
+        . ! Dans ce cas je dois set manuellement avant le persist et le flush :
+
+            $data = $form->getData()
+
+            $purchase = new Purchase;
+            $purchase->setAdresse($data['address'])
+                    ->set
+                    ->set
+                    etc....
+
+        b. JE PEUX REVECOIR UNE ENTITÉ POUR ALLER PLUS VITE :
+
+        . !   en indiquant dans mon Form/EntityType : 'data_class' => L'entityEnQuestion:class,
+
+                public function configureOptions(OptionsResolver $resolver): void
+            {
+                $resolver->setDefaults([
+                    'data_class' => Category::class,
+                ]);
+            }
+
+        de cette façon le formulaire envoie les données sous forme de class, pré-remplie :)
+        je n'ai pas qu'a écrire dans mon controller, pour avoir l'autocomplétion:
+
+        /** @var entityEnQuestion*/
+        $entityEnQuestion = $form->getData();
+
+        /** @var Purchase */
+        $purchase = $form->getData();

@@ -1,0 +1,24 @@
+BONNES PRATIQUES :
+
+• je nomme l'entité autre que 'Order', car c'est un mot-clé mySQL
+
+• lors de la création de l'entité Purchase(commande) :
+
+    la relation est ManytoOne, plusieurs commandes / pour un utilisateur
+MAIS ! je permet que la relation soit null :
+    - si l'utilisateur supprimes son compte, je garde quand même les commandes.
+
+• Dans l'ENTITY purchase :
+
+    - la valeur par défaut de status est : 'PENDING'
+    - je créé des variables globales pour les status pour me simplifier le coding plus tard
+    lorsque que je voudrais utiliser le status :
+
+    public const STATUS_PENDING = 'PENDING';
+    public const STATUS_PAID = 'PAID';
+
+
+    - j'aurais accès à ces infos partout (+autocomplétion) sans me soucier de l'orthographe :
+
+    PURCHASE::S
+

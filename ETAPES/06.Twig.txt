@@ -35,3 +35,8 @@ DECLARER LA VARIABLE DANS TWIG AVANT L'INCLUDES :
 
 {% set formateur = formateur 2 %}
 {% include _partial.html.twig % }
+
+--------------------
+variables globles dans twig
+
+https://symfony.com/doc/5.1/templates.html#the-app-global-variable

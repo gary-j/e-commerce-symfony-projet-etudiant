@@ -115,7 +115,7 @@ avec la méthode ->isValid()
 
 Dans mon controller, ici le ProductController.php
 • j'ai une fonction edit avec une boucle pour vérifier que le formulaire est soumis ET valide.
-• si le formulaire n'est pas valdie, je sors de la boucle et l'affichage twig s'effectue avec les erreurs.
+• si le formulaire n'est pas valide, je sors de la boucle et l'affichage twig s'effectue avec les erreurs.
 
             if ($form->isSubmitted() && $form->isValid()) {
 

@@ -1,0 +1,56 @@
+<?php
+// Il s'agit de réviser, comment les choses se passe sous le rideau
+// En réalité le code peut être beaucoup plus court grâce aux raccourcis de l'AbstractController
+
+namespace App\Controller\Purchase;
+
+use App\Entity\User;
+use Twig\Environment;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
+class PurchasesListController extends AbstractController
+{
+    protected $security;
+    protected $router;
+    protected $twig;
+
+    public function __construct(Security $security, RouterInterface $router, Environment $twig)
+    {
+        $this->security = $security;
+        $this->router = $router;
+        $this->twig = $twig;
+    }
+
+    /**
+     * @Route("/purchase", name="purchase_index")
+     */
+    public function index()
+    {
+        // 1. S'assurer que la personne est connectée sinon redirection accueil/login
+        // - Security et génération d'url en fonction de nom d'une route
+
+        /** @var User */
+        $user = $this->security->getUser();
+
+        if (!$user) {
+            // $url = $this->router->generate('homepage');
+            // return new RedirectResponse($url);
+            throw new AccessDeniedException('Vous devez vous connecter pour acceder à vos commande');
+        }
+        // 2. Nous voulons savoir qui est connecté
+
+        // 3. Nous voulons passé l'utilisateur connecté à Twig pour afficher ses commandes à Twig
+
+        $html = $this->twig->render('purchase/index.html.twig', [
+            'purchases' => $user->getPurchases()
+        ]);
+
+        return new Response($html);
+    }
+}

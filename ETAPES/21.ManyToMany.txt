@@ -1,0 +1,15 @@
+ManyToMany 
+
+problème :
+
+en créant une relation ManyToMany entre la table 'product' et la table 'purchase'
+la quantité des produits achetés ou du même produit acheté, n'est pas prise en compte.
+
+Nous remplaçons cette relation par une VÉRITABLE ENTITÉ, une vrai table.
+
+AVANTAGES :
+
+Si les prix ou noms des produits évoluent dans le temps, j'aurais toujours les infos adéquates
+à l'instant de l'achat.
+
+j'ai dans mon Entité ex, purchaseItem, une propriété 'productName', 'productPrice', 'total' etc...
