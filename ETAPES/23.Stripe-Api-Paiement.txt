@@ -1,0 +1,52 @@
+https://dashboard.stripe.com/test/apikeys
+
+https://stripe.com/docs/payments/quickstart
+
+https://stripe.com/docs/api/payment_intents
+
+
+1. composer require stripe/stripe-php
+
+2. cmd+shift+p : je réindexe pur avoir l'autocompletion (intelephense)
+
+-----
+
+3. dans mon controller de formulaire de paiement :
+
+    - je me fais livrer la purchase ($id)
+    - si pas de purchase => redirection (securité en plus)
+    - j'ajoute la clé Api de Stripe (test ou prod) :
+            \Stripe\Stripe::setApiKey('sk_test_xxxxxxxxxx);
+    
+    - je stocke dans une variable, la création d'un PaymentIntent :
+         $intent = \Stripe\PaymentIntent::create([
+            'amount' => $purchase->getTotal(),
+            'currency' => 'eur',
+        ]);
+
+    - j'utilise la méthode $intent->client_secret pour récupérer la clé client_secret
+    unique cet essaie de paiment, cette commande etc...
+
+    - je livre la clé secrète coté client_secret
+        return $this->render('purchase/payment.html.twig', [
+            'clientSecret' => $intent->client_secret
+        ]);
+
+-----
+
+4. Twig : chargement de Stripe.Js (qui s'occupera de récupérer la clé)
+
+            {% block javascript %}
+                {{ parent() }}
+                {# Pour ne pas écraser les données déjà présentes #}
+                <script src="https://js.stripe.com/v3/"></script>
+            {% endblock %}
+
+-----
+
+5. Création d'un StripService :
+
+    + définition dans service.yaml
+    + en vrai vaut mieux déclarer les cles dans .env ou .env.local
+
+6. Factorisation du controller et de .js

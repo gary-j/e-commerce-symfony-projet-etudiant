@@ -39,13 +39,12 @@ services:
 
     Cocur\Slugify\Slugify: ~
 
-    App\Cart\CartItem:
-        class: App\Cart\CartItem
-        autowire: true
+    App\Stripe\StripeService:
+        arguments:
+            $secretKey: '%env(STRIPE_SECRET_KEY_TEST)%'
+            $publicKey: '%env(STRIPE_PUBLIC_KEY_TEST)%'
 
-    App\Cart\CartService:
-        class: App\Cart\CartService
-        autowire: true
+   
 
 
 

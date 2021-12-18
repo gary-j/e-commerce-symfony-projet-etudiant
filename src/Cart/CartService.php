@@ -102,7 +102,7 @@ class CartService
     }
 
     /**
-     * @return cartItem[]
+     * @return CartItem[]
      */
     public function getDetailedCartItems(): array
     {
@@ -115,7 +115,7 @@ class CartService
             if (!$product) {
                 continue;
             }
-            $detailedCart[] = new CartItem ($product, $qty);
+            $detailedCart[] = new CartItem($product, $qty);
 
             // $detailedCart[] = [
             //     'product' => $product,

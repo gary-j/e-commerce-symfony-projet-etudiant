@@ -4,7 +4,7 @@ namespace App\Cart;
 
 use App\Entity\Product;
 
-class CartItem 
+class CartItem
 {
 
     public $product;

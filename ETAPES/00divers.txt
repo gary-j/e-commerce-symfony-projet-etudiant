@@ -24,7 +24,7 @@ PHP BIN/CONSOLE
 
 
 • php bin/console debug:router 
-voir toutes les routes et comment elles fonctionnent
+voir toutes les routes et comment elles fonctionnent et leur priorité
 
 • php bin/console debug:autowiring "recherché"
 
@@ -39,4 +39,6 @@ voir toutes les routes et comment elles fonctionnent
 • php bin/console cache:clear
 
 • php bin/console make:voter CategoryVoter
+
+
 

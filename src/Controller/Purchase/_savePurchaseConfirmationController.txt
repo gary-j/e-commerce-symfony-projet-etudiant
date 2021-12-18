@@ -58,6 +58,8 @@ class PurchaseConfirmationController
         // 3. Si je ne suis pas connecté : sortir de la route
         // Security
         $user = $this->security->getUser();
+        // ou annotation IsGranted
+
 
         if (!$user) {
             throw new AccessDeniedException("Merci de vous connecter pour confirmer une commande");
@@ -108,7 +110,10 @@ class PurchaseConfirmationController
 
         // 8. Nous allons enregistrer la commande (EntityManagerInterface)
         $this->em->flush();
+
         $flashBag->add('success', "La commande à bien été prise en compte");
+
+        // $this->cartService->empty();
 
         return new RedirectResponse($this->router->generate('cart_show'));
     }

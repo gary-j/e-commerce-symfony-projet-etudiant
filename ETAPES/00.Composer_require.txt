@@ -39,3 +39,7 @@ _______
 TRADUCTION ET TRADUCTION MESSAGE D'ERREURS
 
 • composer require symfony/translation
+_______
+API STRIP PAIEMENT
+
+• composer require stripe/stripe-php
