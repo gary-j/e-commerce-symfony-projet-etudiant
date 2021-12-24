@@ -8,5 +8,3 @@ twig:
         CategoryRepository : "@App\\Repository\\CategoryRepository"
         cartService: "@App\\Cart\\CartService"
         app_environement: '%env(APP_ENV)%'
-        stripe_public_key_test: '%env(STRIPE_PUBLIC_KEY_TEST)%'
-        stripe_public_key_live: '%env(STRIPE_PUBLIC_KEY_LIVE)%'

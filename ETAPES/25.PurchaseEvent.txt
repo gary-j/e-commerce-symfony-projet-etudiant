@@ -1,0 +1,73 @@
+        --------------------------------------
+        CREATION ET PROPAGATION D'UN EVENEMENT
+        --------------------------------------
+
+1. Dans le controller en question appelé l'évenement et le dispatcher
+
+    J'ai besoin de l'EventDispatcherInterface :
+
+    public funtion success(EventDispatcherInterface $dispatcher){
+
+        $purchaseEvent = new PurchaseSuccessEvent($purchase);
+
+        $dispatcher->dispatch($purchaseEvent, 'purchase.success');
+    }
+
+    • $purchaseEvent est l'appel de l'événement (dans le dossier Event) que j'ai crée
+    • 'purchase.success' est le nom que j'ai donné à cette évènement.
+
+
+2. Créer le porteur / véhicule de données de l'évènement
+
+        dans l'exemple il s'agit de ma Purchase, validée et payée
+
+            src/Event/PurchaseSuccessEvent :
+
+        <?php
+
+        namespace App\Event;
+
+        use App\Entity\Purchase;
+        use Symfony\Contracts\EventDispatcher\Event;
+
+        class PurchaseSuccessEvent extends Event
+        {
+
+            private $purchase;
+
+            public function __construct(Purchase $purchase)
+            {
+                $this->purchase = $purchase;
+            }
+
+            public function getPurchase(): Purchase
+            {
+                return $this->purchase;
+            }
+        }
+
+3. Se brancher a l'évènement grâce à un subscriber (qui enverra des emails)
+
+    src/EventDispatcher/PurchaseSuccessEmailSubscriber
+
+            class PurchaseSuccessEmailSubscriber implements EventSubscriberInterface
+        {
+            protected $logger;
+
+            public function __construct(LoggerInterface $logger)
+            {
+                $this->logger = $logger;
+            }
+
+            public static function getSubscribedEvents()
+            {
+                return [
+                    'purchase.success' => 'sendSuccessEmail'
+                ];
+            }
+
+            public function sendSuccessEmail(PurchaseSuccessEvent $purchaseSuccessEvent)
+            {
+                $this->logger->info("Un Email de confirmation a été envoyé pour la commande n° " . $purchaseSuccessEvent->getPurchase()->getId());
+            }
+        }

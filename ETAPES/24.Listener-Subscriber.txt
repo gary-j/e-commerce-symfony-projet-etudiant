@@ -1,0 +1,131 @@
+-----------------------------------------------------
+        LES ECOUTEURS D'EVENEMENTS DANS SYMFONY
+-----------------------------------------------------
+
+    Je peux agir, écouter, ajouter, déclancher des évènements lors :
+        • de la requete (exemple ajout d'attribut)
+        • lors de l'appel du controller
+        • lors de l'envoi de la réponse, etc....
+
+Tout part de public/index.php
+
+$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+$request = Request::createFromGlobals();
+$response = $kernel->handle($request);
+$response->send();
+$kernel->terminate($request, $response);
+_______
+_______
+
+php bin/console debug:event-dispatcher
+php bin/console debug:event-dispatcher kernel.request
+php bin/console debug:event-dispatcher kernel.controller
+php bin/console debug:event-dispatcher kernel.response
+
+**********   DEUX CREATIONS DE LISTENER ET SUBSCRIBER   **********
+
+---------
+LISTENERS (src/EventDispatcher/monListener.php + fichier services.yaml) 
+---------
+
+        <?php
+
+        namespace App\EventDispatcher;
+
+        class PrenomListener
+        {
+            public function addPrenomToAttributes()
+            {
+                dump('Ca fonctionne');
+            }
+
+            public function addGary()
+            {
+                dd('Le test');
+            }
+        }
+
+__________
+services.yaml :
+
+        App\EventDispatcher\PrenomListener:
+        tags: 
+            [
+                {
+                    name: kernel.event_listener, 
+                    event: kernel.request, 
+                    method: addPrenomToAttributes
+                }
+                {
+                    name: kernel.event_listener,
+                    event: kernel.request,
+                    method: addGary
+                }
+            ]
+
+ou
+-----------
+SUBSCRIBERS (en tant que service dans src/EventDispatcher/monSubscriber.php)
+    + implements EventSubscriberInterface (de Symfony)
+    + public static function getSubscribedEvents()    - OBLIGATOIRE
+-----------
+
+    class PrenomSubscriber implements EventSubscriberInterface
+{
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            'kernel.request' => 'addPrenomToAttributes',
+            'kernel.controller' => 'test1',
+            'kernel.response' => 'test2'
+        ];
+    }
+
+    public function addPrenomToAttributes(RequestEvent $requestEvent)
+    {
+        $requestEvent->getRequest()->attributes->set('prenom', 'Gary J.');
+    }
+
+    public function test1()
+    {
+        dump("test1");
+    }
+
+    public function test2()
+    {
+        dump("test2");
+    }
+}
+
+_____________________________________________
+
+    //////        RequestEvent      \\\\\\\
+
+Dans les deux cas ma fonction reçoit une RequestEvent que je peux me faire livrer
+
+RequestEvent qui est crée par onKernelRequest(), exemple lors de :
+ 
+Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelRequest() 
+
+dd($requestEvent) , me permet de voir que j'ai une request que je peux modifier.
+request>attibutes>parameters
+
+        class PrenomListener
+        {
+            public function addPrenomToAttributes(RequestEvent $requestEvent)
+            {
+                $requestEvent->getRequest()->attributes->set('prenom', 'Gary');
+            }
+        }
+
+_____________________________________________
+
+AUTOCONFIGURE = TRUE dans services.yaml
+
+permet à ce que tout ceci fonctionne !
+
+pour desactiver juste un listener : 
+
+        App\EventDispatcher\PrenomListener:
+            autoconfigure : false
