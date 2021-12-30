@@ -2,6 +2,8 @@
         LES ECOUTEURS D'EVENEMENTS DANS SYMFONY
 -----------------------------------------------------
 
+cf: Design Patter : "Mediator"
+
     Je peux agir, écouter, ajouter, déclancher des évènements lors :
         • de la requete (exemple ajout d'attribut)
         • lors de l'appel du controller

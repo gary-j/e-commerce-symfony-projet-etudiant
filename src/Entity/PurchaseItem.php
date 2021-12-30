@@ -75,6 +75,12 @@ class PurchaseItem
     {
         $this->purchase = $purchase;
 
+        // PurchaseItem sait qu'il appartient à cette Purchase,
+        // Mais je dois inscrire ce purchaseItem dans la commande avant le flush s'il ne l'est pas déjà
+        if (!$purchase->getPurchaseItems()->contains($this)) {
+            $purchase->addPurchaseItem($this);
+        }
+
         return $this;
     }
 

@@ -1,0 +1,44 @@
+                        ------------------------------
+                        I. DOCTRINE LIFECYCLE CALLBACK
+                        ------------------------------
+
+1. Dans l'entité en question, avant la class, mettre en annotation :
+
+@ORM\HasLifecycleCallbacks()
+
+                    /**
+                    * @ORM\Entity(repositoryClass=PurchaseRepository::class)
+                    * ORM\HasLifecycleCallbacks()
+                    */
+                    class Purchase
+                    {}
+
+2. Créer des fonctions publiques que Doctrine va appelé automatiquement en fonction des
+    cycles de vie ciblés.
+
+3a. Par convention je nomme la fonction avec le même nom de l'évènement que je cible :
+        prePersist()
+    Mais je peux donner le nom que je veux.
+
+3b. Par Contre en annotation de la fonction je met exactement le nom de l'évènement :
+
+    /*@ORM\PrePersist 
+
+    ! c'est une class que je dois importer !
+
+4. exemple complet dans l'entité - Calcul du total de la Purchase avant le flush,
+
+    /**
+    * @ORM\PreFlush
+    */
+    public function preFlush()
+    {
+        $total = 0;
+        foreach ($this->purchaseItems as $item) {
+            $total += $item->getTotal();
+        }
+
+        $this->total = $total;
+    }
+
+    

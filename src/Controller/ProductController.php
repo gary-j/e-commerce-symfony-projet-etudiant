@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Event\ProductViewEvent;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
@@ -23,6 +24,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ProductController extends AbstractController
 {
@@ -45,7 +47,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/{category_slug}/{product_slug}", name="product_show", priority=-1)
      */
-    public function show($category_slug, $product_slug, $prenom, ProductRepository $productRepository, CategoryRepository $categoryRepository, Request $request)
+    public function show($category_slug, $product_slug, $prenom, ProductRepository $productRepository, CategoryRepository $categoryRepository, Request $request, EventDispatcherInterface $dispatcher)
     {
         // $url = $urlGenerator->generate('product_show', [
         //     'category_slug' => $category_slug,
@@ -62,6 +64,11 @@ class ProductController extends AbstractController
         if (!$product) {
             throw $this->createNotFoundException("Le produit demandé n'éxiste pas");
         }
+        // Le produit existe je récupère et dispacth l'évènement ProductViewEvent as 'product.show'
+        $productViewEvent = new ProductViewEvent($product);
+
+        $dispatcher->dispatch($productViewEvent, 'product.view');
+
         return $this->render('product/show.html.twig', [
             'product' => $product
         ]);

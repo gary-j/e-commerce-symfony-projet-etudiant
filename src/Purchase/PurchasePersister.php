@@ -26,9 +26,12 @@ class PurchasePersister
     public function storePurchase(Purchase $purchase)
     {
         // 6. Nous allons la lier avec l'utilisateur actuellement connecté (Security)
-        $purchase->setUser($this->security->getUser())
-            ->setPurchasedAt(new DateTime())
-            ->setTotal($this->cartService->getTotal());
+        $purchase->setUser($this->security->getUser());
+        // DateTime configurer dans l'entité en LifecycleCallback prePersist()
+        // ->setPurchasedAt(new DateTime())
+
+        // Total configuré dans l'entité Purchase en preFlush()
+        // ->setTotal($this->cartService->getTotal());
 
         $this->em->persist($purchase);
 
@@ -46,6 +49,9 @@ class PurchasePersister
                 ->setQuantity($cartItem->qty)
                 ->setProductPrice($cartItem->product->getPrice())
                 ->setTotal($cartItem->getTotal());
+
+            // $purchase->addPurchaseItem($purchaseItem);
+            // inscription de la purchaseItem dans la purchase fait dans l'entité PurchaseItem directement en preFlush()
 
             $this->em->persist($purchaseItem);
         }

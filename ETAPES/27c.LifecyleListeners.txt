@@ -1,0 +1,52 @@
+                        --------------------------------
+                        II. DOCTRINE LIFECYCLE LISTENERS
+                        --------------------------------
+
+On voudrait créer/modifier un slug pour un produit avant le persist/flush/preUpdate...
+
+!/ Pour la prod, pensez à faire un check de slug dans le controller.
+    Si celui envoyé dans l'url est différent que celui en bdd (mais présent, ou connu),
+    faire une redirection 302 vers la bonne url, pour préserver le SEO.
+
+1. Nous voulons utiliser le sluggerInterface
+
+2. Nous créons un dossier src/Doctrine/Listeners
+
+3. Créer dans Listeners un ProductSlugListener.php
+
+4. Grâce à son emplacement c'est une classe connu du container de service
+
+5. Je déclare l'évènement dans services.yaml :
+        App\Doctrine\Listener\ProductSlugListener:
+        tags: [{ name: "doctrine.event_listener", event: prePersist }]
+
+6. Dans ProductSlugListener.php - si le prePersist concerne l'entité Product alors fait ceci (slug du nom) :
+
+
+    class ProductSlugListener
+{
+    protected $slugger;
+
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
+
+    public function prePersist(LifecycleEventArgs $event)
+    {
+        dd("ça marche");
+
+        $entity = $event->getObject();
+
+        if (!$entity instanceof Product) {
+            return;
+        }
+
+        if (empty($entity->getSlug())) {
+            $entity->setSlug(strtolower($this->slugger->slug($entity->getName())));
+        }
+    }
+}
+
+
+!!! Gourmand en ressource car l'event est appelé pour tout persist quelque soit l'entité.

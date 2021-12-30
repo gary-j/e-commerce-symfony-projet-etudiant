@@ -1,0 +1,37 @@
+                        ------------------------------
+                        III. DOCTRINE ENTITY LISTENERS
+                        ------------------------------
+                    
+Appeler un Listener seulement pour UNE entité.
+
+1. Nous voulons utiliser le sluggerInterface
+
+2. Nous créons un dossier src/Doctrine/Listeners
+
+3. Créer dans Listeners un ProductSlugListener.php
+
+4. Grâce à son emplacement c'est une classe connu du container de service
+
+5. Dans services.yaml je déclare l'évènement :
+
+        App\Doctrine\Listener\ProductSlugListener:
+        tags:
+            [
+                {
+                    name: "doctrine.orm.entity_listener",
+                    event: prePersist,
+                    entity: App\Entity\Product
+                }
+            ]
+
+6. Dans mon ProductSlugListener.php :
+
+     // 2. Methode 'Doctrine Entity Listener'
+    public function prePersist(Product $entity, LifecycleEventArgs $event)
+    {
+        $entity = $event->getObject();
+
+        if (empty($entity->getSlug())) {
+            $entity->setSlug(strtolower($this->slugger->slug($entity->getName())));
+        }
+    }

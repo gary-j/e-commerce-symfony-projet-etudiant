@@ -13,7 +13,7 @@
         $dispatcher->dispatch($purchaseEvent, 'purchase.success');
     }
 
-    • $purchaseEvent est l'appel de l'événement (dans le dossier Event) que j'ai crée
+    • $purchaseEvent est l'appel de l'événement (dans le dossier Event) que j'ai créé
     • 'purchase.success' est le nom que j'ai donné à cette évènement.
 
 

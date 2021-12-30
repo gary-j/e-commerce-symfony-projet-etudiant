@@ -1,0 +1,31 @@
+            *********  DOCTRINE ET SES EVENEMENTS *********
+            ***********************************************
+
+
+3 TYPES :
+
+    • LIFECYCLE CALLBACK :  
+        - Modificiation simple sur une entité, à un moment précis.
+        -/- Mais je n'ai pas accès au container de service car je suis dans une entité
+
+
+    • LISTENER / SUBSCRIBER :
+        - Modificiations complexes sur toutes nos entités à un moment précis.
+        -/- Gourmand en ressource car l'évent est appelé à tout types d'action sur les entités.
+
+    • ENTITY LISTENER :
+        - Modificiations complexes susr une entité à un moment précis.
+
+
+DOCUMENTATION : https://symfony.com/doc/current/doctrine/events.html
+
+EVENTS : https://www.doctrine-project.org/projects/doctrine-orm/en/current/reference/events.html#events-overview            
+                      
+                      
+                      
+events: preRemove, postRemove, prePersist, postPersist, preUpdate, postUpdate, postLoad,
+        loadClassMetadata, preFlush, onFlush, postFlush, onClear.
+
+
+
+ 
