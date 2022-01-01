@@ -1,6 +1,6 @@
 TWIG PEUT AFFICHER DYNAMIQUEMENT DES DONNES PAR LUI MEME.
 
-Methode 1 : En faisant appel un controller depuis une template
+Methode 1 : En faisant appel à un controller depuis une template
     pas recommandé, long, et lourd en processus.
 
 Méthode 2 : En déclarant une variable globals contenant un service ou des données.

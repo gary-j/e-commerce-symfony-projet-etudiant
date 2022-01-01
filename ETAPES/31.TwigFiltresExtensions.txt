@@ -1,0 +1,48 @@
+        --------------------------------------------
+        ETENDRE TWIG AVEC DE NOUVEAUX FILTRES PERSOS
+        --------------------------------------------
+
+Dans l'exemple nous allons créé un filtre "amount" pour le formatage des prix :
+
+- diviser le montant automatiquement par 100 (car les prix sont en centimes dans la bdd)
+- mettre une virgule à la place de point
+- ajouter le signe €
+
+1. Création d'un fichier Extension connu du container de service :
+    src/Twig/AmountExtension.php
+
+2. La classe créée doit étendre 'AbstractExtension" de Twig\Extension\AbstractExtension
+
+3. Fonction getFilters() (pour appliquer un filtre) ou getFonction() (pour déclencher une fonction)
+
+4. Ecrire la fonction que je souhaite (return)
+
+doc => https://symfony.com/doc/current/templating/twig_extension.html
+
+ ** code exemple pour le formatage d'un montant :
+
+    class AmountExtension extends AbstractExtension
+{
+    public function getFilters()
+    {
+        return [
+            new TwigFilter("amount", [$this, "formatAmount"])
+        ];
+    }
+
+    // Formater un montant. ex : 12299 en 122,99 €
+    public function formatAmount($value)
+    {
+        // 1. Diviser par 100 le montant
+        $amount = $value / 100;
+        // dd($amount);
+
+        // 2. Mettre une virgule avant les décimals
+        $amount = number_format($amount, 2, ',', ' ');
+        // dd($amount);
+
+        // 3. Return en Rajoutant le symbole €
+        return $amount . ' €';
+    }
+}
+

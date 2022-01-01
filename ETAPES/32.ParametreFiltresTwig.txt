@@ -1,0 +1,28 @@
+
+
+Dans mon 
+
+class AmountExtension extends AbstractExtension
+{
+        public function getFilters()
+        {
+            return [
+                new TwigFilter("amount", [$this, "formatAmount"]),
+                new TwigFilter("price", [$this, "priceFormat"])
+            ];
+        }
+
+    public function priceFormat($value, string $symbol = '€', string $decsep = ',', string $thousandsep = ' ')
+        {
+            $price = $value / 100;
+            $price = number_format($price, 2, $decsep, $thousandsep);
+            return $price . $symbol;
+        }
+}
+
+                - DANS MA TEMPLATE TWIG -
+
+•   Je peux ajouter des paramètres à mon filtre ('$' '.' ' ' au lieu de '€' ',')
+•   Sinon, il prendra les valeurs par défaut de AmountExtension.
+
+<td>{{item.product.price | price('$', '.', ' ')}}</td>
