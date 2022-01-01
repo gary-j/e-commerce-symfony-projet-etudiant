@@ -9,6 +9,7 @@ class CartItem
 
     public $product;
     public $qty;
+    public $total;
 
     public function __construct(Product $product, int $qty)
     {

@@ -1,0 +1,3 @@
+!!!
+Si j'intègre la validation de la purchase via un WEBHOOK STRIPE,
+Il faudra récupérer l'utilisateur lié à la commande avec Stripe, pour l'envoi d'email.

@@ -27,10 +27,9 @@ Appeler un Listener seulement pour UNE entité.
 6. Dans mon ProductSlugListener.php :
 
      // 2. Methode 'Doctrine Entity Listener'
-    public function prePersist(Product $entity, LifecycleEventArgs $event)
+    public function prePersist(Product $entity)
     {
-        $entity = $event->getObject();
-
+       
         if (empty($entity->getSlug())) {
             $entity->setSlug(strtolower($this->slugger->slug($entity->getName())));
         }

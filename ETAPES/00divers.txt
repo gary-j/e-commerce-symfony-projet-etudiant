@@ -40,5 +40,15 @@ voir toutes les routes et comment elles fonctionnent et leur priorité
 
 • php bin/console make:voter CategoryVoter
 
+-
+mailer
 
+• php bin/console debug:config framework mailer
+• php bin/console debug:autowiring mail
+
+>>  CREER L'EMAIL ET/OU DEMANDER L'ENVOI
+    Symfony\Component\Mailer\MailerInterface 
+
+>>  TRANSPORT QUI ENVOI REELLEMENT L'EMAIL
+    Symfony\Component\Mailer\Transport\TransportInterface
 

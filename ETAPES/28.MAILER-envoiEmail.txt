@@ -1,0 +1,52 @@
+                        ---------------------------
+                            ENVOI D'EMAIL 1/2
+                        ---------------------------
+
+OUTILS : 
+    • mailtrap.io (tester les emails)
+    • symfony mailer (MailerInterface + TransportInterface)
+    • .env à configurer   > ###> symfony/mailer ###
+    • mailer.yaml à configurer
+
+
+
+>>  CREER L'EMAIL ET/OU DEMANDER L'ENVOI
+    Symfony\Component\Mailer\MailerInterface 
+
+>>  TRANSPORT QUI ENVOI REELLEMENT L'EMAIL
+    Symfony\Component\Mailer\Transport\TransportInterface
+
+        
+        --- TEST ENVOI EMAIL --- 
+
+Dans mon ProductViewEmailSubscriber.php 
+j'ai une fonction qui envoi des emails, lorsqu'une page produit est visité :
+
+1.  Dans le constructeur je me fais livrer le MailerInterface $mailer
+
+2.  Dans ma fonction d'envoi d'email je créé un $email = new Email
+
+3.  Grâce à la classe Email de Symfony\Component\Mime\Email
+
+4.  Je peux utiliser des chaines de caractère OU DES OBJETS pour configurer l'email :
+
+5.  ex : $email->from(new Address) de Symfony\Component\Mime\Address
+
+6. J'envoi l'email, par la méthode send() du $mailer: 
+    $this->mailer->send($email);
+
+    exemple de code : 
+
+     public function sendProductViewEmail(ProductViewEvent $productViewEvent)
+    {
+        $email = new Email();
+
+        $email->from(new Address("contact@mail.com", "l'administrateur"))
+            ->to("admin@mail.com")
+            ->text("Un visiteur est sur la page du produit n° " . $productViewEvent->getProduct()->getId())
+            ->subject("visite produit n° " . $productViewEvent->getProduct()->getId());
+
+        $this->mailer->send($email);
+
+        $this->logger->info("Le produit " . $productViewEvent->getProduct()->getName() . " a été consulté.");
+    }

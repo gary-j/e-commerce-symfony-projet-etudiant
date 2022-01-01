@@ -43,3 +43,17 @@ _______
 API STRIP PAIEMENT
 
 • composer require stripe/stripe-php
+
+_______
+ - Envoi d'email
+
+https://mailtrap.io/ +
+
+ • composer require mailer
+
+ - autre Transport d'email :
+ • composer require symfony/google-mailer
+ • composer require symfony/mailchimp-mailer
+
+ 
+ 

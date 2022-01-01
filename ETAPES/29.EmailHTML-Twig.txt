@@ -1,0 +1,37 @@
+                        --------------------------
+                            ENVOI D'EMAIL 2/2
+                              TEMPLATE TWIG
+                        --------------------------
+
+
+1.  Dans le constructeur je me fais livrer le MailerInterface $mailer
+
+2.  Dans ma fonction d'envoi d'email je créé un email :
+
+        $email = new TemplatedEmail();
+
+3. J'utilise la méthode ->htmlTemplate() et je lui donne le chemin de la template TWIG
+
+4. S'ensuit la méthode ->context() pour fournir les infos (Produit) nécessaire à l'email
+
+
+        exemple de code :
+
+          public function sendProductViewEmail(ProductViewEvent $productViewEvent)
+    {
+        // $email = new Email();
+
+        $email = new TemplatedEmail();
+
+        $email->from(new Address("contact@mail.com", "l'administrateur"))
+            ->to("admin@mail.com")
+            ->text("Un visiteur est sur la page du produit n° " . $productViewEvent->getProduct()->getId())
+            ->htmlTemplate('emails/product_view.html.twig')
+            ->context([
+                "product" => $productViewEvent->getProduct
+            ])
+            ->subject("visite produit n° " . $productViewEvent->getProduct()->getId());
+
+        $this->mailer->send($email);
+
+    }
