@@ -1,0 +1,6 @@
+1. Connecter dépot GitHub à Héroku
+2. Dans Heroku setting :
+remplacer la variable d'environnement APP_ENV (key) en PROD (value)
+3. Voir l'application > Forbiddend
+4. Ajout du fichier Procfile à la racine du projet.
+        web : heroku-php-apache2 public/
