@@ -16,3 +16,24 @@ composer require symfony/apache-pack  (pour le ficher .htaccess)
       Dans config/prod/monolog.yaml :
         nested:
                 path: php://stderr
+
+9.Configurer les scripts pour les migrations et les fixtures
+
+        1. Dans composer.json on crée nos rubriques de scripts :
+
+                "scripts":{
+                        "database-setup":[
+                                "php bin/console doctrine:migrations:migrate --no-interaction",
+                                "php bin/console doctrine:fixtures:load --no-interaction
+                        ],
+                };
+
+! [] = tableau, liste de commandes
+! {} = un objet
+
+        2. j'appelle la rubrique "database-setup", après le "composer install" :
+
+                 "post-install-cmd": [
+                        "@auto-scripts",
+                        "@database-setup"
+                ],
