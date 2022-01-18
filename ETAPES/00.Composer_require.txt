@@ -55,5 +55,10 @@ https://mailtrap.io/ +
  • composer require symfony/google-mailer
  • composer require symfony/mailchimp-mailer
 
+_______
+DEPLOIEMENT
+
+• composer require apache-pack  (pour le ficher .htaccess)
+
  
  
