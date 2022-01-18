@@ -58,7 +58,7 @@ https://mailtrap.io/ +
 _______
 DEPLOIEMENT
 
-• composer require apache-pack  (pour le ficher .htaccess)
+• composer require symfony/apache-pack  (pour le ficher .htaccess)
 
  
  
