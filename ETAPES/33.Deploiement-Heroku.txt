@@ -7,3 +7,12 @@ remplacer la variable d'environnement APP_ENV (key) en PROD (value)
 
 5. ré-écriture d'url pour le serveur apache :
 composer require symfony/apache-pack  (pour le ficher .htaccess)
+
+6. Add-ons JawsDB pour une base de donnée avec Heroku.
+7. Ajout de toutes les variables d'environnement.
+
+8.Configurer les logs pour qu'ils soient plus détaillés :
+
+      Dans config/prod/monolog.yaml :
+        nested:
+                path: php://stderr
