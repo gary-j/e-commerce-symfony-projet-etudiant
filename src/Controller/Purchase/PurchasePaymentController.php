@@ -40,7 +40,7 @@ class PurchasePaymentController extends AbstractController
         $intent = $stripeService->getPaymentIntent($purchase);
         $stripePublicKey = $stripeService->getStripePublicKey();
 
-        dump($stripePublicKey);
+        // dump($stripePublicKey);
 
 
         return $this->render('purchase/payment.html.twig', [

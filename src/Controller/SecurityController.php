@@ -22,7 +22,7 @@ class SecurityController extends AbstractController
 
         $error = $utils->getLastAuthenticationError();
 
-        dump($error, $utils->getLastUsername());
+        // dump($error, $utils->getLastUsername());
 
         return $this->render('security/login.html.twig', [
             'formView' => $form->createView(),
