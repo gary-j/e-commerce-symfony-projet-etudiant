@@ -37,3 +37,12 @@ composer require symfony/apache-pack  (pour le ficher .htaccess)
                         "@auto-scripts",
                         "@database-setup"
                 ],
+
+10. On veut le DoctrineFixtures Bundle dans tous les environnements pour effectuer les migrations :
+
+        Dans config>bundles.php :
+                • changer le :
+                        Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
+                • pour :
+                        Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['all' => true],
+
